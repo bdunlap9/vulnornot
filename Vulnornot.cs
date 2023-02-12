@@ -11,7 +11,12 @@ namespace VulnOrNot
         {
             Console.WriteLine("Enter a string to search for vulnerabilities:");
             string inputString = Console.ReadLine();
+            string cve = GetCVE(inputString);
+            Console.WriteLine(cve);
+        }
 
+        static string GetCVE(string inputString)
+        {
             // Scrape the ghdb.xml file from the exploit database
             WebClient client = new WebClient();
             string xmlData = client.DownloadString("https://gitlab.com/exploit-database/exploitdb/-/blob/main/ghdb.xml");
@@ -25,16 +30,18 @@ namespace VulnOrNot
 
             if (elements.Count() > 0)
             {
-                Console.WriteLine("Vulnerability found! The CVE number is:");
+                Console.WriteLine("Vulnerability found! The link is:");
                 foreach (var element in elements)
                 {
-                    Console.WriteLine(element.Attribute("name").Value);
+                    return element.Element("link").Value;
                 }
             }
             else
             {
-                Console.WriteLine("No vulnerabilities found for the given string.");
+                return "No vulnerabilities found for the given string.";
             }
+
+            return "";
         }
     }
 }
